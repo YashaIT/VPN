@@ -1,0 +1,22 @@
+{
+  "name": "vpn-invite-service",
+  "version": "1.0.0",
+  "description": "VPN service with admin invite links, user registration and WireGuard config delivery",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node test/app.test.js"
+  },
+  "keywords": [
+    "vpn",
+    "wireguard",
+    "express"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4"
+  }
+}

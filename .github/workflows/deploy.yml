@@ -39,6 +39,7 @@ jobs:
           script: |
             export APP_DIR="${{ secrets.DEPLOY_APP_DIR }}"
             export BRANCH="main"
+            export DEPLOY_ENV_B64="${{ secrets.DEPLOY_ENV_B64 }}"
             cd "${APP_DIR}"
             chmod +x scripts/deploy.sh
             ./scripts/deploy.sh

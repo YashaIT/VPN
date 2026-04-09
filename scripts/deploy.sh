@@ -12,8 +12,22 @@ if [ ! -d .git ]; then
   exit 1
 fi
 
+if command -v docker-compose >/dev/null 2>&1; then
+  COMPOSE_CMD="docker-compose"
+elif docker compose version >/dev/null 2>&1; then
+  COMPOSE_CMD="docker compose"
+else
+  echo "[deploy] docker compose is not available" >&2
+  exit 1
+fi
+
+if [ -n "${DEPLOY_ENV_B64:-}" ]; then
+  echo "[deploy] writing .env from GitHub secret"
+  printf '%s' "${DEPLOY_ENV_B64}" | base64 -d > .env
+fi
+
 if [ ! -f .env ]; then
-  echo "[deploy] .env file is missing in ${APP_DIR}" >&2
+  echo "[deploy] .env file is missing in ${APP_DIR} and DEPLOY_ENV_B64 was not provided" >&2
   exit 1
 fi
 
@@ -23,10 +37,10 @@ git checkout "${BRANCH}"
 git pull --ff-only origin "${BRANCH}"
 
 echo "[deploy] rebuilding and starting containers"
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build --remove-orphans
+${COMPOSE_CMD} -f docker-compose.yml -f docker-compose.prod.yml up -d --build --remove-orphans
 
 echo "[deploy] waiting for healthcheck"
 sleep 5
-docker compose ps
+${COMPOSE_CMD} ps
 
 echo "[deploy] done"
